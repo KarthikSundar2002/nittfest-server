@@ -2,7 +2,7 @@
 minversion = "6.0"
 addopts = "-v"
 testpaths = [
-    "tests"
+    "tests/test_main.py"
 ]
 norecursedirs = [
 

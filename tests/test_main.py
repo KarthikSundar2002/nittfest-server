@@ -1,21 +1,20 @@
 """
 Test
 """
-from fastapi.testclient import TestClient
 
-from config.database import TestSessionLocal
+from fastapi.testclient import TestClient
+from config.database import Base, get_database, get_test_database, test_engine, TestingSessionLocal
+from scripts.seeder.seed_tests import seed_testdb
 from server.main import app
 
-client = TestClient(app)
+Base.metadata.create_all(bind=test_engine)
 
+async def test():
+    """
+    seed tests
+    """
+    await seed_testdb(database=TestingSessionLocal())
+    return TestClient(app)
 
-def get_database():
-    """
-    Dependency function to get
-    SessionLocal for testing
-    """
-    try:
-        database = TestSessionLocal()
-        yield database
-    finally:
-        database.close()
+app.dependency_overrides[get_database] = get_test_database
+client = test()
